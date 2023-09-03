@@ -1,0 +1,4 @@
+repository "default@local"
+  path "/"
+    br "/main"
+    co "/main"
