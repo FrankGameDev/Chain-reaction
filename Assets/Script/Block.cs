@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using DG.Tweening.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Block : MonoBehaviour
+public class Block : CancellableMonoBehaviour
 {
 
     //Block properties
@@ -50,6 +51,12 @@ public class Block : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         ChangeColor(currentPlayer.sphereColor);
+        CreateCancellationToken();
+    }
+
+    private void OnDestroy()
+    {
+        DOTween.KillAll();
     }
 
     public void InitBlock(Vector2 pos, Block left = null, Block right = null, Block up = null, Block down = null)
@@ -75,11 +82,16 @@ public class Block : MonoBehaviour
         AudioManager.Instance.PlayAddSphereSound();
         await AddSphere();
 
+        if (cancellationTokenSource.IsCancellationRequested) 
+            return;
+
         GameManager.Instance.ChangeState(GameState.CHAIN_REACTION);
     }
 
     async Task AddSphere(bool chaining = false)
     {
+        CreateCancellationToken();
+
         SetBlockInfo();
 
         if (blockInfo.sphereAmount >= MaxValue)
@@ -98,8 +110,9 @@ public class Block : MonoBehaviour
             GameManager.Instance.chainingBlockCount -= 1;
 
         await Task.Yield();
+        if (cancellationTokenSource.IsCancellationRequested) 
+            return;
     }
-
 
 
     //Propaga l'esplosione verso i blocchi adiacenti
@@ -114,9 +127,18 @@ public class Block : MonoBehaviour
         explosions.Join(ExplodeAndAddSphere(_leftBlock))
         .Join(ExplodeAndAddSphere(_rightBlock))
         .Join(ExplodeAndAddSphere(_upBlock))
-        .Join(ExplodeAndAddSphere(_downBlock));       
+        .Join(ExplodeAndAddSphere(_downBlock));
+
+        //explosions.OnKill(() =>
+        //{
+        //    if ((cancellationTokenSource != null && cancellationTokenSource.IsCancellationRequested) || explosions != null)
+        //        explosions.Kill();
+        //});
 
         await explosions.Play().AsyncWaitForCompletion();
+
+        if (cancellationTokenSource.IsCancellationRequested)
+            return;
 
         var actions = new List<Task>
         {
@@ -129,6 +151,8 @@ public class Block : MonoBehaviour
         .ToList();
 
         await Task.WhenAll(actions);
+        if (cancellationTokenSource.IsCancellationRequested)
+            return;
     }
 
     private Tween ExplodeAndAddSphere(Block nextBlock)
@@ -144,9 +168,10 @@ public class Block : MonoBehaviour
 
         return spawnedSphere.transform.DOMove(nextBlock._blockPosition, .15f)
             .SetEase(Ease.Linear)
-            .OnComplete(() => {
+            .OnComplete(() =>
+            {
                 Destroy(spawnedSphere);
-                });
+            });
     }
 
 

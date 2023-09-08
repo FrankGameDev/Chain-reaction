@@ -1,4 +1,5 @@
 using DamageNumbersPro;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,7 +36,7 @@ public class GameManager : MonoBehaviour
     [Header("Game Settings")]
     public PlayerContainer playerContainer;
     private List<Tuple<PlayerSettings, bool>> playerInGame;
-    public int playerCount
+    public int playerCountInGame
     {
         get { return PlayerPrefs.GetInt("PlayerCount"); }
     }
@@ -74,10 +76,12 @@ public class GameManager : MonoBehaviour
         }
 
         playerInGame = new List<Tuple<PlayerSettings, bool>>();
-        for (int i = 0; i < playerCount; i++)
+        for (int i = 0; i < playerCountInGame; i++)
         {
             playerInGame.Add(new Tuple<PlayerSettings, bool>(playerContainer.players[i], true));
         }
+
+        DOTween.SetTweensCapacity(300, 100);
     }
     private void Start()
     {
@@ -131,26 +135,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void CheckGameStatusOnMoveDone()
-    {
-        if (playerCount == 2 && currentState == GameState.MOVE_DONE)
-        {
-            if (checkStatusTimer < checkStatusMaxTimer)
-            {
-                checkStatusTimer += Time.deltaTime;
-                return;
-            }
-            bool weHaveAWinner = CheckPlayerStatus();
-            if (weHaveAWinner) ChangeState(GameState.END);
-
-            checkStatusTimer = 0;
-        }
-    }
-
 
     #region Game Logic
 
-    public void ChangeState(GameState newState)
+    public async void ChangeState(GameState newState)
     {
         currentState = newState;
 
@@ -179,15 +167,34 @@ public class GameManager : MonoBehaviour
             case GameState.CHAIN_REACTION:
                 //Wait until the reaction ends
                 isChaining = true;
-                if (maxCurrentChainCount >= 5)
+                if (maxCurrentChainCount >= Random.Range(7,10))
                     chainReactionEvent?.RaiseEvents();
                 UIManager.Instance.UpdateChainCounter(currentPlayerIndex, maxCurrentChainCount);
                 ChangeState(GameState.SWITCH_PLAYER);
                 break;
             case GameState.END:
+                await gridContainer.transform.DOScaleY(0f, 1f)
+                            .SetEase(Ease.OutBack).AsyncWaitForCompletion();
                 winEvent?.RaiseEvents();
                 break;
         }
+    }
+
+    void CheckGameStatusOnMoveDone()
+    {
+        if (currentState != GameState.MOVE_DONE || !canWin)
+            return;
+
+        bool weHaveAWinner = CheckPlayerStatus();
+        if (checkStatusTimer < checkStatusMaxTimer)
+        {
+            checkStatusTimer += Time.deltaTime;
+            return;
+        }
+        if (weHaveAWinner) ChangeState(GameState.END);
+
+        checkStatusTimer = 0;
+
     }
 
 
@@ -198,7 +205,7 @@ public class GameManager : MonoBehaviour
         do
         {
             currentPlayerIndex += 1;
-            if (currentPlayerIndex >= playerCount)
+            if (currentPlayerIndex >= playerCountInGame)
             {
                 currentPlayerIndex = 0;
                 canWin = true;
@@ -243,7 +250,9 @@ public class GameManager : MonoBehaviour
     // Utility
 
     public PlayerSettings GetCurrentPlayerSettings() => playerInGame[currentPlayerIndex].Item1;
-    public int remainingPlayerAmount => playerInGame.Count(tuple => tuple.Item2);
+
+    [SerializeField] public int remainingPlayerAmount => playerInGame.Count(tuple => tuple.Item2);
+
 }
 
 [Serializable]

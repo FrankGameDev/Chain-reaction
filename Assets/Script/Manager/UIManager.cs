@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour
 
     public void InitPlayerInfoUI()
     {
-        for (int i = 0; i < GameManager.Instance.playerCount; i++)
+        for (int i = 0; i < GameManager.Instance.playerCountInGame; i++)
         {
             PlayerSettings p = GameManager.Instance.playerContainer.players[i];
             playersInfo[i].Init(p.playerName, p.sphereColor);
