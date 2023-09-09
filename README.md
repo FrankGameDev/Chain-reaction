@@ -1,3 +1,5 @@
+## Chain Reaction
+
 Chain Reaction is a strategic board game that combines elements of planning, spatial reasoning, and chain reactions. The game typically consists of the following components:
 
 Game Board: The game board is a grid with multiple cells. Each cell can hold from one to three sphere.
