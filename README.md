@@ -16,10 +16,6 @@ Chain Reaction is a game that requires critical thinking, adaptability, and a go
 
 \n
 
-![8XJ6D6](https://github.com/FrankGameDev/Chain-reaction/assets/114099283/a3e86c9f-e901-46ef-a204-e15bc2531e29)
-![BH1DmG](https://github.com/FrankGameDev/Chain-reaction/assets/114099283/efeb3975-ad83-449c-ad78-b63b36b83b4d)
-![dya+cS](https://github.com/FrankGameDev/Chain-reaction/assets/114099283/20ba3c52-8960-439c-aa64-ce3e9d403627)
-
 
 https://github.com/FrankGameDev/Chain-reaction/assets/114099283/bf64003c-2bb1-47b7-8b7f-aee4c472491f
 
