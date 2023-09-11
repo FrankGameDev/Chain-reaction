@@ -13,6 +13,5 @@ Players must carefully consider the consequences of their actions and anticipate
 Winning: The game can have various win conditions, such as capturing all of your opponent's spheres, reaching a specific score first, or achieving a particular game objective.
 
 Chain Reaction is a game that requires critical thinking, adaptability, and a good understanding of the game's mechanics. It can be played as a two-player game or with more players, depending on the version and rules in use. The gameplay can be both challenging and entertaining, making it a popular choice among strategy game enthusiasts.
-
 https://github.com/FrankGameDev/Chain-reaction/assets/114099283/bf64003c-2bb1-47b7-8b7f-aee4c472491f
 
