@@ -17,6 +17,7 @@ public class Block : CancellableMonoBehaviour
         _downBlock;
     private SpriteRenderer spriteRenderer;
 
+    //Define max number of sphere in the block
     private int MaxValue
     {
         get
@@ -38,7 +39,7 @@ public class Block : CancellableMonoBehaviour
     private GameObject currentSphere;
     public GameObject explosionSphere;
 
-    // Game Logic parameters
+    // ==== Game Logic parameters
     private PlayerSettings currentPlayer
     {
         get => GameManager.Instance.GetCurrentPlayerSettings();
@@ -70,7 +71,6 @@ public class Block : CancellableMonoBehaviour
 
         blockInfo = new BlockInfo();
     }
-
 
     private async void OnMouseDown()
     {
@@ -128,12 +128,6 @@ public class Block : CancellableMonoBehaviour
         .Join(ExplodeAndAddSphere(_rightBlock))
         .Join(ExplodeAndAddSphere(_upBlock))
         .Join(ExplodeAndAddSphere(_downBlock));
-
-        //explosions.OnKill(() =>
-        //{
-        //    if ((cancellationTokenSource != null && cancellationTokenSource.IsCancellationRequested) || explosions != null)
-        //        explosions.Kill();
-        //});
 
         await explosions.Play().AsyncWaitForCompletion();
 
