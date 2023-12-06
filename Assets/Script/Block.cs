@@ -88,6 +88,11 @@ public class Block : CancellableMonoBehaviour
         GameManager.Instance.ChangeState(GameState.CHAIN_REACTION);
     }
 
+    /// <summary>
+    /// Aggiunge una sfera nel blocco e gestisce l'esplosione
+    /// </summary>
+    /// <param name="chaining">Stato reazioni a catena</param>
+    /// <returns></returns>
     async Task AddSphere(bool chaining = false)
     {
         CreateCancellationToken();
@@ -115,7 +120,10 @@ public class Block : CancellableMonoBehaviour
     }
 
 
-    //Propaga l'esplosione verso i blocchi adiacenti
+    /// <summary>
+    /// Propaga l'esplosione verso i blocchi adiacenti
+    /// </summary>
+    /// <returns></returns>
     private async Task Explode()
     {
         blockInfo.sphereAmount = 0;
@@ -125,9 +133,9 @@ public class Block : CancellableMonoBehaviour
         Sequence explosions = DOTween.Sequence();
 
         explosions.Join(ExplodeAndAddSphere(_leftBlock))
-        .Join(ExplodeAndAddSphere(_rightBlock))
-        .Join(ExplodeAndAddSphere(_upBlock))
-        .Join(ExplodeAndAddSphere(_downBlock));
+                .Join(ExplodeAndAddSphere(_rightBlock))
+                .Join(ExplodeAndAddSphere(_upBlock))
+                .Join(ExplodeAndAddSphere(_downBlock));
 
         await explosions.Play().AsyncWaitForCompletion();
 
