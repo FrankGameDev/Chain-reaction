@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
             case GameState.CHAIN_REACTION:
                 //Wait until the reaction ends
                 isChaining = true;
-                if (maxCurrentChainCount >= Random.Range(7,10))
+                if (maxCurrentChainCount >= Random.Range(7, 10))
                     chainReactionEvent?.RaiseEvents();
                 UIManager.Instance.UpdateChainCounter(currentPlayerIndex, maxCurrentChainCount);
                 ChangeState(GameState.SWITCH_PLAYER);
@@ -176,6 +176,7 @@ public class GameManager : MonoBehaviour
                 await gridContainer.transform.DOScaleY(0f, 1f)
                             .SetEase(Ease.OutBack).AsyncWaitForCompletion();
                 winEvent?.RaiseEvents();
+                StartCoroutine(ReviewManagerController.Instance.GetReviewPopup());
                 break;
         }
     }

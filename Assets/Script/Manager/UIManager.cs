@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
     [Header("Win UI")]
     public DamageNumber winText;
     public RectTransform winTextPosition;
+    [SerializeField] private Image _winFrameImage;
 
     private PlayerSettings currentPlayer => GameManager.Instance.GetCurrentPlayerSettings();
 
@@ -62,6 +63,8 @@ public class UIManager : MonoBehaviour
     {
         DamageNumber tmp = winText.Spawn(winTextPosition.anchoredPosition, $"{currentPlayer.playerName} wins", currentPlayer.sphereColor);
         tmp.SetAnchoredPosition(winTextPosition.transform, Vector2.zero);
+
+        _winFrameImage.color = currentPlayer.sphereColor;
     }
 
     public void InitPlayerInfoUI()
@@ -84,10 +87,12 @@ public class UIManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartCoroutine(ReviewManagerController.Instance.GetReviewPopup());
     }
 
     public void ToMenu()
     {
+        StartCoroutine(ReviewManagerController.Instance.GetReviewPopup());
         SceneManager.LoadScene("Menu");
     }
 
@@ -121,7 +126,7 @@ public struct PlayerInfoUI
         chainText.color = color;
         chainCount.color = color;
         chainCount.text = "0";
-        frame.color = new Color(color.r * .5f, color.g * .5f, color.b * .5f) ;
+        frame.color = new Color(color.r * .5f, color.g * .5f, color.b * .5f);
         deleteImage.color = color;
         deleteImage.enabled = false;
     }
